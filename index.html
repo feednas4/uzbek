@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#1e88e5">
+<link rel="apple-touch-icon" href="icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>Узбекистан</title>
+<style>
+  :root { --bg:#f4f7fb; --card:#fff; --text:#1a2433; --muted:#667085; --accent:#1e88e5; --line:#e2e8f0; }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg:#0f1722; --card:#18222f; --text:#e8eef6; --muted:#93a1b5; --accent:#64b5f6; --line:#2a3748; }
+  }
+  * { box-sizing:border-box; }
+  body { margin:0; font-family:system-ui,Segoe UI,Arial,sans-serif; background:var(--bg); color:var(--text); }
+  header { padding:20px 16px 0; text-align:center; }
+  h1 { margin:0 0 4px; font-size:1.6rem; }
+  header p { margin:0; color:var(--muted); }
+  .wrap { max-width:900px; margin:0 auto; padding:16px; }
+
+  /* Вкладки на чистом CSS */
+  input[name="tab"] { display:none; }
+  .tabs { display:flex; gap:8px; margin-bottom:16px; }
+  .tabs label { flex:1; text-align:center; padding:12px; border-radius:10px; background:var(--card);
+    border:1px solid var(--line); cursor:pointer; font-weight:600; }
+  #t1:checked ~ .tabs label[for="t1"],
+  #t2:checked ~ .tabs label[for="t2"],
+  #t3:checked ~ .tabs label[for="t3"] { background:var(--accent); color:#fff; border-color:var(--accent); }
+  .panel { display:none; }
+  #t1:checked ~ .panels .p1,
+  #t2:checked ~ .panels .p2,
+  #t3:checked ~ .panels .p3 { display:block; }
+
+  .card { background:var(--card); border:1px solid var(--line); border-radius:12px; padding:16px; }
+  .cities { display:flex; flex-wrap:wrap; gap:8px; margin-bottom:12px; }
+  .cities button { padding:8px 14px; border-radius:20px; border:1px solid var(--line); background:var(--card);
+    color:var(--text); cursor:pointer; font-size:.95rem; }
+  .cities button.active { background:var(--accent); color:#fff; border-color:var(--accent); }
+  .search { display:flex; gap:8px; margin-bottom:12px; }
+  .search input { flex:1; padding:10px 12px; border-radius:10px; border:1px solid var(--line); background:var(--card); color:var(--text); font-size:1rem; }
+  .search button { padding:10px 16px; border-radius:10px; border:0; background:var(--accent); color:#fff; cursor:pointer; }
+  .now { font-size:2.6rem; font-weight:700; margin:4px 0; }
+  .days { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-top:12px; }
+  .day { text-align:center; padding:10px; border:1px solid var(--line); border-radius:10px; }
+  .muted { color:var(--muted); }
+
+  .news { display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:12px; }
+  .news a { display:block; text-decoration:none; color:inherit; background:var(--card);
+    border:1px solid var(--line); border-radius:12px; padding:16px; }
+  .news a:hover { border-color:var(--accent); }
+  .news b { display:block; font-size:1.1rem; margin-bottom:4px; }
+
+  iframe { width:100%; height:520px; border:0; border-radius:12px; }
+</style>
+</head>
+<body>
+<header>
+  <h1>🇺🇿 Узбекистан</h1>
+  <p>Погода · Новости · Карта</p>
+  <p id="clock" style="margin-top:6px;font-weight:600"></p>
+</header>
+
+<div class="wrap">
+  <input type="radio" name="tab" id="t1" checked>
+  <input type="radio" name="tab" id="t2">
+  <input type="radio" name="tab" id="t3">
+
+  <div class="tabs">
+    <label for="t1">🌤 Погода</label>
+    <label for="t2">📰 Новости</label>
+    <label for="t3">🗺 Карта</label>
+  </div>
+
+  <div class="panels">
+    <!-- ПОГОДА -->
+    <section class="panel p1">
+      <div class="search">
+        <input id="q" placeholder="Найти город Узбекистана…">
+        <button id="go">Найти</button>
+      </div>
+      <div class="cities" id="cities"></div>
+      <div class="card" id="weather">Загрузка…</div>
+    </section>
+
+    <!-- НОВОСТИ -->
+    <section class="panel p2">
+      <div class="news">
+        <a href="https://kun.uz" target="_blank" rel="noopener"><b>Kun.uz</b><span class="muted">Главные новости страны</span></a>
+        <a href="https://daryo.uz" target="_blank" rel="noopener"><b>Daryo</b><span class="muted">Новости и аналитика</span></a>
+        <a href="https://gazeta.uz" target="_blank" rel="noopener"><b>Gazeta.uz</b><span class="muted">Политика, экономика, общество</span></a>
+        <a href="https://uza.uz" target="_blank" rel="noopener"><b>UzA</b><span class="muted">Национальное информагентство</span></a>
+        <a href="https://podrobno.uz" target="_blank" rel="noopener"><b>Podrobno.uz</b><span class="muted">Новости на русском</span></a>
+        <a href="https://nuz.uz" target="_blank" rel="noopener"><b>Nuz.uz</b><span class="muted">Ежедневные новости</span></a>
+      </div>
+    </section>
+
+    <!-- КАРТА -->
+    <section class="panel p3">
+      <iframe title="Карта Узбекистана"
+        src="https://www.openstreetmap.org/export/embed.html?bbox=55.9%2C37.1%2C73.2%2C45.6&amp;layer=mapnik"></iframe>
+    </section>
+  </div>
+</div>
+
+<script>
+  var CITIES = [
+    { name: "Ташкент",   lat: 41.31, lon: 69.24 },
+    { name: "Самарканд", lat: 39.65, lon: 66.96 },
+    { name: "Бухара",    lat: 39.77, lon: 64.42 },
+    { name: "Хива",      lat: 41.38, lon: 60.36 },
+    { name: "Фергана",   lat: 40.39, lon: 71.78 },
+    { name: "Нукус",     lat: 42.46, lon: 59.61 }
+  ];
+  var ICONS = function (c) {
+    if (c === 0) return "☀️";
+    if (c <= 3) return "⛅";
+    if (c <= 48) return "🌫";
+    if (c <= 67) return "🌧";
+    if (c <= 77) return "❄️";
+    if (c <= 82) return "🌦";
+    return "⛈";
+  };
+  var box = document.getElementById("weather");
+  var list = document.getElementById("cities");
+
+  function load(city, btn) {
+    [].forEach.call(list.children, function (b) { b.classList.remove("active"); });
+    btn.classList.add("active");
+    box.textContent = "Загрузка…";
+    var url = "https://api.open-meteo.com/v1/forecast?latitude=" + city.lat + "&longitude=" + city.lon +
+      "&current=temperature_2m,wind_speed_10m,weather_code" +
+      "&daily=temperature_2m_max,temperature_2m_min,weather_code&forecast_days=3&timezone=auto";
+    fetch(url).then(function (r) { return r.json(); }).then(function (d) {
+      var c = d.current, dl = d.daily, html = "";
+      html += "<div class='muted'>" + city.name + "</div>";
+      html += "<div class='now'>" + ICONS(c.weather_code) + " " + Math.round(c.temperature_2m) + "°C</div>";
+      html += "<div class='muted'>Ветер: " + Math.round(c.wind_speed_10m) + " км/ч</div><div class='days'>";
+      for (var i = 0; i < 3; i++) {
+        var dt = new Date(dl.time[i]).toLocaleDateString("ru-RU", { weekday: "short", day: "numeric" });
+        html += "<div class='day'><div class='muted'>" + dt + "</div><div>" + ICONS(dl.weather_code[i]) + "</div><b>" +
+          Math.round(dl.temperature_2m_max[i]) + "°</b> / " + Math.round(dl.temperature_2m_min[i]) + "°</div>";
+      }
+      box.innerHTML = html + "</div>";
+    }).catch(function () {
+      box.textContent = "Не удалось загрузить погоду. Проверьте интернет.";
+    });
+  }
+
+  CITIES.forEach(function (city, i) {
+    var b = document.createElement("button");
+    b.textContent = city.name;
+    b.onclick = function () { load(city, b); };
+    list.appendChild(b);
+    if (i === 0) load(city, b);
+  });
+
+  // Часы (Ташкент)
+  function tick() {
+    document.getElementById("clock").textContent = "🕒 " + new Date().toLocaleTimeString("ru-RU", { timeZone: "Asia/Tashkent" }) + " (Ташкент)";
+  }
+  tick(); setInterval(tick, 1000);
+
+  // Поиск города
+  function search() {
+    var q = document.getElementById("q").value.trim();
+    if (!q) return;
+    box.textContent = "Поиск…";
+    fetch("https://geocoding-api.open-meteo.com/v1/search?count=10&language=ru&name=" + encodeURIComponent(q))
+      .then(function (r) { return r.json(); })
+      .then(function (d) {
+        var res = (d.results || []).filter(function (x) { return x.country_code === "UZ"; })[0];
+        if (!res) { box.textContent = "Город в Узбекистане не найден."; return; }
+        load({ name: res.name, lat: res.latitude, lon: res.longitude }, document.createElement("button"));
+      }).catch(function () { box.textContent = "Ошибка поиска. Проверьте интернет."; });
+  }
+  document.getElementById("go").onclick = search;
+  document.getElementById("q").onkeydown = function (e) { if (e.key === "Enter") search(); };
+
+  if ("serviceWorker" in navigator && location.protocol.indexOf("http") === 0) {
+    navigator.serviceWorker.register("sw.js").catch(function () {});
+  }
+</script>
+</body>
+</html>
